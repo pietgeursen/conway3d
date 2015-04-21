@@ -1,9 +1,14 @@
-var Cell = function(){
-  this.overPopulation = 9;
-  this.underPopulation = 4;
-  this.resurrection = 9;
-  this.alive = Math.random() > 0.7;
+var Cell = function(r,c,d){
+  this.overPopulation = 3;
+  this.underPopulation = 2;
+  this.resurrection = 3;
+  this.alive = Math.random() > 0.8;
   this.neighbours = 0;
+  this.sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 1, scene);
+  this.sphere.position.x = c;
+  this.sphere.position.y = r;
+  this.sphere.position.z = d;
+
 }
 
 Cell.prototype = {
@@ -23,6 +28,9 @@ Cell.prototype = {
       this.alive = true;
     }
   },
+  render: function(){
+    this.sphere.visibility = this.alive
+  }
 }
 
 
@@ -70,7 +78,7 @@ Conway.prototype= {
       for(var j = 0; j < this.size; j++ ){
         var col = [];
         for(var k = 0; k < this.size; k++ ){
-          col.push(new Cell);
+          col.push(new Cell(i,j,k));
         }
         row.push(col);
       }
@@ -88,7 +96,7 @@ Conway.prototype= {
 
   updateNeighbourCount: function(r,c,d){
 
-    var cell = this.grid[r][c][d];
+    var cell = this.box[r][c][d];
     cell.neighbours = 0;
 
     for(var i = 0; i < this.directions.length; i++){
@@ -99,7 +107,7 @@ Conway.prototype= {
       neighbourD = direction[0] + d;
 
       if(!this.isOutOfBounds(neighbourR, neighbourC, neighbourD)){
-        var neigbour = this.grid[neighbourR][neighbourC][neighbourD];
+        var neigbour = this.box[neighbourR][neighbourC][neighbourD];
         if(neigbour.alive){
           cell.neighbours ++;
         }
@@ -111,7 +119,8 @@ Conway.prototype= {
     for(var i = 0; i < this.size; i++ ){
       for(var j = 0; j < this.size; j++ ){
         for(var k = 0; k < this.size; k++ ){
-          updateNeighbourCount(i,j,k);
+          var cell = this.box[i][j][k];
+          cell.updateState();
         }
       }
     }
@@ -121,11 +130,31 @@ Conway.prototype= {
     for(var i = 0; i < this.size; i++ ){
       for(var j = 0; j < this.size; j++ ){
         for(var k = 0; k < this.size; k++ ){
-          updateNeighbourCount(i,j,k);
+          this.updateNeighbourCount(i,j,k);
         }
       }
     }
+  },
+
+  renderCells: function(){
+    for(var i = 0; i < this.size; i++ ){
+      for(var j = 0; j < this.size; j++ ){
+        for(var k = 0; k < this.size; k++ ){
+          var cell = this.box[i][j][k];
+          cell.render();
+        }
+      }
+    }
+  },
+
+  update: function(){
+    this.updateNeighboursCount();
+    this.updateCellStates();
+    this.renderCells();
+
   }
+
+
 }
 
 
