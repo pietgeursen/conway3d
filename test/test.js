@@ -10,11 +10,28 @@ describe('Conway', function(){
     done();
   })
 
-  describe('#construct', function(){
+  describe('#generateBox', function(){
     it('should construct a 3d box of correct size', function(){
       assert.equal(conway.box.length, size);
       assert.equal(conway.box[0].length, size);
       assert.equal(conway.box[0][0].length, size);
+    })
+  })
+
+  describe('#isOutOfBounds', function(){
+
+    it('should return false when not out of bounds', function(){
+      assert.equal(conway.isOutOfBounds(0,0,0), false);
+    })
+
+    it('should return true when out of bounds', function(){
+
+      assert.equal(conway.isOutOfBounds(-1,0,0), true);
+      assert.equal(conway.isOutOfBounds(0,-1,0), true);
+      assert.equal(conway.isOutOfBounds(0,0,-1), true);
+      assert.equal(conway.isOutOfBounds(size,0,0), true);
+      assert.equal(conway.isOutOfBounds(0,size,0), true);
+      assert.equal(conway.isOutOfBounds(0,0,size), true);
     })
   })
 

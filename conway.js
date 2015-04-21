@@ -22,7 +22,7 @@ Cell.prototype = {
     }else if(this.isResurrectable()){
       this.alive = true;
     }
-  }
+  },
 }
 
 
@@ -30,6 +30,37 @@ var Conway = function(size){
   this.size = size;
   this.box = [];
   this.generateBox(size);
+  this.directions = [
+  [1, 0, 1],
+  [1, 1, 1],
+  [1, 1, 0],
+  [1, 1,-1],
+  [1, 0,-1],
+  [1,-1,-1],
+  [1,-1, 0],
+  [1,-1, 1],
+  [1, 0, 0],
+
+  [-1, 0, 1],
+  [-1, 1, 1],
+  [-1, 1, 0],
+  [-1, 1,-1],
+  [-1, 0,-1],
+  [-1,-1,-1],
+  [-1,-1, 0],
+  [-1,-1, 1],
+  [-1, 0, 0],
+
+  [0, 0, 1],
+  [0, 1, 1],
+  [0, 1, 0],
+  [0, 1,-1],
+  [0, 0,-1],
+  [0,-1,-1],
+  [0,-1, 0],
+  [0,-1, 1]
+
+  ]
 }
 
 Conway.prototype= {
@@ -45,8 +76,56 @@ Conway.prototype= {
       }
       this.box.push(row);
     }
-  }
+  },
 
+  isOutOfBound: function(v){
+   return v < 0 || v >= this.size;
+  },
+
+  isOutOfBounds: function(r,c,d){
+    return this.isOutOfBound(r) || this.isOutOfBound(c) || this.isOutOfBound(d);
+  },
+
+  updateNeighbourCount: function(r,c,d){
+
+    var cell = this.grid[r][c][d];
+    cell.neighbours = 0;
+
+    for(var i = 0; i < this.directions.length; i++){
+      var direction = this.directions[i];
+
+      neighbourR = direction[2] + r;
+      neighbourC = direction[1] + c;
+      neighbourD = direction[0] + d;
+
+      if(!this.isOutOfBounds(neighbourR, neighbourC, neighbourD)){
+        var neigbour = this.grid[neighbourR][neighbourC][neighbourD];
+        if(neigbour.alive){
+          cell.neighbours ++;
+        }
+      }
+    }
+  },
+
+  updateCellStates: function(){
+    for(var i = 0; i < this.size; i++ ){
+      for(var j = 0; j < this.size; j++ ){
+        for(var k = 0; k < this.size; k++ ){
+          updateNeighbourCount(i,j,k);
+        }
+      }
+    }
+  },
+
+  updateNeighboursCount: function(){
+    for(var i = 0; i < this.size; i++ ){
+      for(var j = 0; j < this.size; j++ ){
+        for(var k = 0; k < this.size; k++ ){
+          updateNeighbourCount(i,j,k);
+        }
+      }
+    }
+  }
 }
 
 
